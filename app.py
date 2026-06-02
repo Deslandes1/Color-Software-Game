@@ -85,7 +85,6 @@ def show_sidebar():
 
 # ---------- COLOR MATCHING GAME (drag & drop) ----------
 def color_match_game():
-    # HTML + JS for drag-drop color matching, sounds, balloons, etc.
     game_html = """
     <!DOCTYPE html>
     <html>
@@ -300,11 +299,10 @@ def color_match_game():
 
         // Game state
         let shuffledColors = [];        // shuffled order of colorsData
-        let matchedStates = new Array(totalColors).fill(false);  // per swatch index
+        let matchedStates = new Array(totalColors).fill(false);
         let remainingMatches = totalColors;
         let winTriggered = false;
 
-        // DOM elements
         const colorsContainer = document.getElementById('colorsContainer');
         const namesContainer = document.getElementById('namesContainer');
         const remainingSpan = document.getElementById('remainingCount');
@@ -312,7 +310,6 @@ def color_match_game():
         const errorToast = document.getElementById('errorToast');
         const resetBtn = document.getElementById('resetBtn');
 
-        // Audio context (lazy init on first user interaction)
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
@@ -356,7 +353,6 @@ def color_match_game():
         function playWinFanfare() {
             const ctx = initAudio();
             ctx.resume().then(() => {
-                // Simple cheerful melody: two beeps
                 const osc1 = ctx.createOscillator();
                 const gain1 = ctx.createGain();
                 osc1.connect(gain1);
@@ -390,7 +386,6 @@ def color_match_game():
             remainingSpan.innerText = remainingMatches;
         }
 
-        // Shuffle array function
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -399,9 +394,7 @@ def color_match_game():
             return arr;
         }
 
-        // Reset / Initialize game
         function initGame() {
-            // Shuffle the colors order for top row
             shuffledColors = shuffleArray([...colorsData]);
             matchedStates.fill(false);
             remainingMatches = totalColors;
@@ -412,7 +405,6 @@ def color_match_game():
             renderDraggableNames();
         }
 
-        // Render color swatches (first row)
         function renderColors() {
             colorsContainer.innerHTML = '';
             for (let i = 0; i < totalColors; i++) {
@@ -423,38 +415,30 @@ def color_match_game():
                 swatch.style.backgroundColor = color.bg;
                 swatch.setAttribute('data-index', i);
                 swatch.setAttribute('data-color-name', color.name);
-                // Inner content: checkmark if matched
                 const checkSpan = document.createElement('div');
                 checkSpan.className = 'check-mark';
                 checkSpan.innerText = '✓';
                 swatch.appendChild(checkSpan);
                 
-                // Drop event listener
-                swatch.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                });
+                swatch.addEventListener('dragover', (e) => e.preventDefault());
                 swatch.addEventListener('drop', (e) => {
                     e.preventDefault();
                     if (winTriggered) return;
                     const swatchIndex = parseInt(e.currentTarget.getAttribute('data-index'));
-                    if (matchedStates[swatchIndex]) return; // already matched
+                    if (matchedStates[swatchIndex]) return;
                     
                     const draggedColorName = e.dataTransfer.getData('text/plain');
                     if (!draggedColorName) return;
                     
                     const targetColorName = shuffledColors[swatchIndex].name;
                     if (draggedColorName === targetColorName) {
-                        // CORRECT MATCH
                         playBingoSound();
                         matchedStates[swatchIndex] = true;
                         remainingMatches--;
                         updateRemainingUI();
-                        // Update swatch visual
                         e.currentTarget.classList.add('matched');
-                        // Remove the corresponding draggable element
                         const targetDraggable = document.querySelector(`.draggable-name[data-color-name="${draggedColorName}"]`);
                         if (targetDraggable) targetDraggable.remove();
-                        // Check win condition
                         if (remainingMatches === 0 && !winTriggered) {
                             winTriggered = true;
                             winDiv.style.display = 'block';
@@ -462,7 +446,6 @@ def color_match_game():
                             launchBalloonsCelebration();
                         }
                     } else {
-                        // WRONG MATCH
                         playErrorSound();
                         showErrorToastMsg();
                     }
@@ -471,10 +454,8 @@ def color_match_game():
             }
         }
 
-        // Render draggable color names (only those not yet matched)
         function renderDraggableNames() {
             namesContainer.innerHTML = '';
-            // Collect unmatched color names from current shuffled set
             for (let i = 0; i < totalColors; i++) {
                 if (!matchedStates[i]) {
                     const color = shuffledColors[i];
@@ -497,7 +478,6 @@ def color_match_game():
             }
         }
 
-        // ----- BALLOONS & CELEBRATION (with flying balloons & names) -----
         function launchBalloonsCelebration() {
             const container = document.createElement('div');
             container.style.position = 'fixed';
@@ -509,7 +489,6 @@ def color_match_game():
             container.style.zIndex = '10000';
             document.body.appendChild(container);
             
-            // Balloons (100 colorful balloons)
             for (let i = 0; i < 100; i++) {
                 const balloon = document.createElement('div');
                 balloon.style.position = 'absolute';
@@ -527,7 +506,6 @@ def color_match_game():
                 container.appendChild(balloon);
             }
             
-            // Stars / sparkles
             for (let i = 0; i < 120; i++) {
                 const star = document.createElement('div');
                 star.style.position = 'absolute';
@@ -542,7 +520,6 @@ def color_match_game():
                 container.appendChild(star);
             }
             
-            // Add "You Win!" floating message
             const winText = document.createElement('div');
             winText.innerText = '🏆 GREAT JOB! 🏆';
             winText.style.position = 'absolute';
@@ -557,7 +534,6 @@ def color_match_game():
             winText.style.fontFamily = 'Arial Black, sans-serif';
             container.appendChild(winText);
             
-            // Built by Gesner floating message
             const creditSpan = document.createElement('div');
             creditSpan.innerText = 'Built by Gesner Deslandes';
             creditSpan.style.position = 'absolute';
@@ -579,16 +555,10 @@ def color_match_game():
                 }
             `;
             document.head.appendChild(style);
-            
             setTimeout(() => { container.remove(); }, 9000);
         }
         
-        // Reset game function
-        resetBtn.addEventListener('click', () => {
-            initGame();
-        });
-        
-        // Initialize everything on page load
+        resetBtn.addEventListener('click', () => initGame());
         initGame();
     </script>
     </body>
@@ -600,13 +570,16 @@ def color_match_game():
 def main_app():
     show_sidebar()
     
-    # Load and display the image from GitHub
+    # Image from GitHub (raw URL) - reduced size, aligned right of title
     image_url = "https://raw.githubusercontent.com/Deslandes1/Color-Software-Game/main/Gesner%20Deslandes.png"
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image(image_url, width=250)
     
-    st.markdown("<h1 style='text-align:center;'>🎨 Color Match Game 🎨</h1>", unsafe_allow_html=True)
+    # Two columns: title on left (aligned right), picture on right (small)
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.markdown("<h1 style='text-align:right; margin-bottom:0;'>🎨 Color Match Game 🎨</h1>", unsafe_allow_html=True)
+    with col2:
+        st.image(image_url, width=60)  # Reduced size
+    
     st.markdown("<p style='text-align:center; font-size:1.2rem;'>Drag the color names to the matching colored squares. Listen for the BINGO sound!</p>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; color:#ffd966;'>✨ Built by Gesner Deslandes ✨</p>", unsafe_allow_html=True)
     color_match_game()
