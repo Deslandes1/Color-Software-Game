@@ -60,7 +60,7 @@ def spinning_globe():
     </style>
     """, unsafe_allow_html=True)
 
-# ---------- SIDEBAR (no pricing, built by Gesner) ----------
+# ---------- SIDEBAR (with competitive pricing, built by Gesner) ----------
 def show_sidebar():
     spinning_globe()
     st.sidebar.markdown("## **GlobalInternet.py**")
@@ -74,6 +74,19 @@ def show_sidebar():
     st.sidebar.markdown("**🌐 Website:**")
     st.sidebar.markdown("[https://globalinternetsitepy-abh7v6tnmskxxnuplrdcgk.streamlit.app/](https://globalinternetsitepy-abh7v6tnmskxxnuplrdcgk.streamlit.app/)")
     st.sidebar.markdown("---")
+    
+    # Competitive Pricing Section
+    st.sidebar.markdown("### 💰 Competitive Pricing")
+    st.sidebar.markdown("Get the **complete source code** delivered to your email inbox:")
+    st.sidebar.markdown("""
+    | Package | Price |
+    |---------|-------|
+    | **Full Source Code** (email delivery) | $29 USD |
+    | **Source + Customization** | $49 USD |
+    """)
+    st.sidebar.markdown("📧 **To order:** Send an email to `deslandes78@gmail.com` with your request. Payment via PayPal or cash app. Code will be sent within 24 hours.")
+    st.sidebar.markdown("---")
+    
     st.sidebar.markdown("### 🎮 How to Play")
     st.sidebar.markdown("1. Drag a color name (bottom row) to its matching color swatch (top row).")
     st.sidebar.markdown("2. Hear a **Bingo!** sound when correct.")
